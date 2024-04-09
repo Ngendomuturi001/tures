@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "264319474708",
+    "project_id": "tures-1a1f5",
+    "storage_bucket": "tures-1a1f5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:264319474708:android:b036c7c2fa735506b05b01",
+        "android_client_info": {
+          "package_name": "com.example.kiddobyte"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQ-eoSv2u8NLhY-3CQP87XFqaQ8LPiifI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
