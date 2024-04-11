@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Html
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -41,11 +42,28 @@ class TeacherActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.dot, menu)
+        val logoutItem = menu?.findItem(R.id.action_logout)
+        val profileItem = menu?.findItem(R.id.action_profile)
+
+        logoutItem?.let {
+            val title = it.title
+            title?.let { text ->
+                it.setTitle(Html.fromHtml("<font color='#000000'>$text</font>"))
+            }
+        }
+
+        profileItem?.let {
+            val title = it.title
+            title?.let { text ->
+                it.setTitle(Html.fromHtml("<font color='#000000'>$text</font>"))
+            }
+        }
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId){
+
             R.id.action_logout->{
                 FirebaseAuth.getInstance().signOut()
                 val sharedPrefs = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
