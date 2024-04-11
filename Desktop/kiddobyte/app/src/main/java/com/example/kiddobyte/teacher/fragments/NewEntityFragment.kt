@@ -2,6 +2,7 @@ package com.example.kiddobyte.teacher.fragments
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -38,10 +39,14 @@ class NewEntityFragment : Fragment() {
     private val binding get()= _binding!!
     private lateinit var auth:FirebaseAuth
     private val  firestore = FirebaseFirestore.getInstance()
+    private lateinit var sharedPrefs: SharedPreferences
+
     private var parentMap = HashMap<String, String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        sharedPrefs = requireActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
@@ -50,7 +55,12 @@ class NewEntityFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        val userTypes = resources.getStringArray(R.array.userTypes)
+        val userType = sharedPrefs.getString("userType", null)
+        val userTypes = if (userType == "Parent") {
+            resources.getStringArray(R.array.userTypesP)
+        } else {
+            resources.getStringArray(R.array.userTypes)
+        }
         val arrayAdapter = ArrayAdapter(requireContext(), R.layout.dropdown_item, userTypes)
         binding.autoCompleteView.setAdapter(arrayAdapter)
     }
@@ -61,7 +71,15 @@ class NewEntityFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentNewEntityBinding.inflate(inflater, container, false)
-        val userTypes = resources.getStringArray(R.array.userTypes)
+        val userType = sharedPrefs.getString("userType", null)
+        if(userType=="Parent"){
+            binding.autoCompleteView.setText("Student")
+        }
+        val userTypes = if (userType == "Parent") {
+            resources.getStringArray(R.array.userTypesP)
+        } else {
+            resources.getStringArray(R.array.userTypes)
+        }
         val arrayAdapter = ArrayAdapter(requireContext(), R.layout.dropdown_item, userTypes)
         var parentAdapter = ArrayAdapter<String>(requireContext(), R.layout.dropdown_item)
 

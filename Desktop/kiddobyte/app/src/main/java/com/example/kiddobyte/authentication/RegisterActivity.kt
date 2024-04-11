@@ -54,6 +54,7 @@ private fun createUser(){
                     )
                     firestore.collection("users").document(uid).set(userData)
                         .addOnSuccessListener {
+                            user.sendEmailVerification()
                             Log.d("Firestore success", "USER data saved successfully")
                             Toast.makeText(this, "A verification link has been sent to your email account.", Toast.LENGTH_SHORT).show()
 

@@ -61,6 +61,7 @@ class NewModuleFragment : Fragment() {
         _binding = FragmentNewModuleBinding.inflate(inflater, container, false)
         storageRef = FirebaseStorage.getInstance().getReference("images")
         val difficultyTypes = resources.getStringArray(R.array.difficulty)
+
         val arrayAdapter = ArrayAdapter(requireContext(), R.layout.dropdown_item, difficultyTypes)
         var selected = "Easy"
         binding.difficulty.setAdapter(arrayAdapter)
