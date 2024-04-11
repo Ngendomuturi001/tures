@@ -79,95 +79,106 @@ class NewModuleFragment : Fragment() {
             selected = parent.getItemAtPosition(position).toString()
         }
         binding.saveModuleButton.setOnClickListener{
-            binding.saveModuleButton.isEnabled = false
-            binding.moduleProgressBar.visibility = View.VISIBLE
-            val title = binding.inputNewTitle.text.toString()
-            val difficulty = selected
-            auth = FirebaseAuth.getInstance()
-
-
-            val currentUser = auth.currentUser
-
-            firestore = FirebaseFirestore.getInstance()
-
-            uri?.let { uri1 ->
-                val timestamp = System.currentTimeMillis()
-                val randomString = UUID.randomUUID().toString().substring(0,8)
-                storageRef.child("$timestamp-$randomString").putFile(uri1)
-                    .addOnSuccessListener {
-                        it.metadata!!.reference!!.downloadUrl
-                            .addOnSuccessListener {url->
-                                currentUser?.let {
-                                    val authorUid = currentUser.uid
-                                    val authorName = currentUser.displayName?: "Unknown"
-                                    val newDoc = Module(
-                                        title,
-                                        authorName,
-                                        authorUid,
-                                        difficulty,
-                                        url.toString(),
-                                        createdAt = Calendar.getInstance().time,
-                                        updatedAt = Calendar.getInstance().time,
-                                        moduleId = param1
-                                    )
-                                    if(param1!=null) {
-                                        firestore.collection("modules").document(param1!!).collection("submodules")
-                                            .add(newDoc)
-                                            .addOnSuccessListener {
-                                                Log.d(
-                                                    "Firestore success",
-                                                    "Module data saved successfully"
-                                                )
-                                                Toast.makeText(
-                                                    context,
-                                                    "Submodule added successfully",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                                requireActivity().supportFragmentManager.popBackStack()
-                                            }
-                                            .addOnFailureListener {
-                                                Log.w("Firestore error", "Error adding module", it)
-                                                Toast.makeText(
-                                                    context,
-                                                    "Error adding module!",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                            }
-                                    } else {
-                                        firestore.collection("modules")
-                                            .add(newDoc)
-                                            .addOnSuccessListener {
-                                                Log.d(
-                                                    "Firestore success",
-                                                    "Module data saved successfully"
-                                                )
-                                                Toast.makeText(
-                                                    context,
-                                                    "Module added successfully",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                                requireActivity().supportFragmentManager.popBackStack()
-                                            }
-                                            .addOnFailureListener {
-                                                Log.w("Firestore error", "Error adding module", it)
-                                                Toast.makeText(
-                                                    context,
-                                                    "Error adding module!",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                            }
-                                    }
-                                }
-                            }
-                    }
-                    .addOnCompleteListener{
-                        binding.moduleProgressBar.visibility = View.GONE
-                        binding.saveModuleButton.isEnabled = true
-                    }
-            }
+            createModule(selected)
         }
         return binding.root
 
+    }
+
+    private fun createModule(selected:String){
+        binding.saveModuleButton.isEnabled = false
+        binding.moduleProgressBar.visibility = View.VISIBLE
+        val title = binding.inputNewTitle.text.toString()
+        val difficulty = selected
+        auth = FirebaseAuth.getInstance()
+    if(title.isEmpty()||uri==null){
+        Toast.makeText(
+            context,
+            "Please fill in all fields!",
+            Toast.LENGTH_SHORT
+        ).show()
+        return
+    }
+
+        val currentUser = auth.currentUser
+
+        firestore = FirebaseFirestore.getInstance()
+
+        uri?.let { uri1 ->
+            val timestamp = System.currentTimeMillis()
+            val randomString = UUID.randomUUID().toString().substring(0,8)
+            storageRef.child("$timestamp-$randomString").putFile(uri1)
+                .addOnSuccessListener {
+                    it.metadata!!.reference!!.downloadUrl
+                        .addOnSuccessListener {url->
+                            currentUser?.let {
+                                val authorUid = currentUser.uid
+                                val authorName = currentUser.displayName?: "Unknown"
+                                val newDoc = Module(
+                                    title,
+                                    authorName,
+                                    authorUid,
+                                    difficulty,
+                                    url.toString(),
+                                    createdAt = Calendar.getInstance().time,
+                                    updatedAt = Calendar.getInstance().time,
+                                    moduleId = param1
+                                )
+                                if(param1!=null) {
+                                    firestore.collection("modules").document(param1!!).collection("submodules")
+                                        .add(newDoc)
+                                        .addOnSuccessListener {
+                                            Log.d(
+                                                "Firestore success",
+                                                "Module data saved successfully"
+                                            )
+                                            Toast.makeText(
+                                                context,
+                                                "Submodule added successfully",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                            requireActivity().supportFragmentManager.popBackStack()
+                                        }
+                                        .addOnFailureListener {
+                                            Log.w("Firestore error", "Error adding module", it)
+                                            Toast.makeText(
+                                                context,
+                                                "Error adding module!",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                } else {
+                                    firestore.collection("modules")
+                                        .add(newDoc)
+                                        .addOnSuccessListener {
+                                            Log.d(
+                                                "Firestore success",
+                                                "Module data saved successfully"
+                                            )
+                                            Toast.makeText(
+                                                context,
+                                                "Module added successfully",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                            requireActivity().supportFragmentManager.popBackStack()
+                                        }
+                                        .addOnFailureListener {
+                                            Log.w("Firestore error", "Error adding module", it)
+                                            Toast.makeText(
+                                                context,
+                                                "Error adding module!",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                }
+                            }
+                        }
+                }
+                .addOnCompleteListener{
+                    binding.moduleProgressBar.visibility = View.GONE
+                    binding.saveModuleButton.isEnabled = true
+                }
+        }
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
